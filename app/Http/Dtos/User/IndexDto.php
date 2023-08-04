@@ -2,7 +2,7 @@
 
 namespace App\Http\Dtos\User;
 
-class IndexDto
+class IndexDto implements Dto
 {
     public string $name;
     public int $id;

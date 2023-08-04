@@ -5,13 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Validator;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
 
 class Request extends FormRequest
 {
+    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
+    {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
 
     /**
      * @template T
@@ -26,7 +29,6 @@ class Request extends FormRequest
         $result = new $class;
         $reflectClass = new ReflectionClass($class);
         $this->fillFromQuery($result, $reflectClass);
-        dd($result);
 
         return $result;
     }

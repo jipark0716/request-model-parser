@@ -17,6 +17,7 @@ class UserController extends Controller
     public function index(Request $request): void
     {
         $dto = $request->parse(IndexDto::class);
+        dd($dto);
     }
 
     /**
@@ -30,9 +31,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        dd(request());
+//        dd($id);
     }
 
     /**
