@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Attributes\FromQuery;
 use App\Http\Dtos\User\IndexDto;
 use App\Http\Requests\Request;
-use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
     /**
-     * @param Request $request
+     * @param IndexDto $request
      * @return void
-     * @throws \ReflectionException
-     * @throws ValidationException
      */
-    public function index(Request $request): void
+    public function index(#[FromQuery] IndexDto $request): void
     {
-        $dto = $request->parse(IndexDto::class);
-        dd($dto);
+        dd($request);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Http\Dtos\User;
 
-class IndexDto implements Dto
+class IndexDto
 {
-    public string $name;
-    public int $id;
-    public bool $hide;
+    public readonly string $name;
+    public readonly int $id;
+    public readonly bool $hide;
 }
