@@ -6,5 +6,5 @@ class IndexDto
 {
     public string $name;
     public int $id;
-    public bool $hide = false;
+    public bool $hide;
 }

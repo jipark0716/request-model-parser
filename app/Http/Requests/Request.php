@@ -25,46 +25,58 @@ class Request extends FormRequest
     {
         $result = new $class;
         $reflectClass = new ReflectionClass($class);
-        $this->createValidator($reflectClass)->validate();
-        foreach ($reflectClass->getProperties() as $property) {
-            if ($this->has($property->getName())) {
-                $property->setValue($result, $this->get($property->getName()));
-            }
-        }
+        $this->fillFromQuery($result, $reflectClass);
         dd($result);
 
         return $result;
     }
 
     /**
+     * @template T
+     * @param T $result
      * @param ReflectionClass $reflectClass
-     * @return Validator
+     * @return T
+     * @throws ValidationException
      */
-    protected function createValidator(ReflectionClass $reflectClass): Validator
+    protected function fillFromQuery($result, ReflectionClass $reflectClass): object
     {
-        return Facades\Validator::make(
+        Facades\Validator::make(
             $this->validationData(),
             collect($reflectClass->getProperties())
                 ->mapWithKeys(fn(ReflectionProperty $property): array => [
-                    $property->getName() => $this->getValidateRule($property)
+                    $property->getName() => $this->rulesByAttribute($property, true)
                 ])
                 ->toArray()
-        );
+        )->validate();
+
+        foreach ($reflectClass->getProperties() as $property) {
+            $name = $property->getName();
+            if ($this->query->has($name)) {
+                if ($property->getType()->getName() == 'bool') {
+                    $property->setValue($result, $this->query->get($name) != 0);
+                } else {
+                    $property->setValue($result, $this->query->get($name));
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
      * @param ReflectionProperty $property
+     * @param bool $fromQuery
      * @return array
      * @throws \Exception
      */
-    protected function getValidateRule(ReflectionProperty $property): array
+    protected function rulesByAttribute(ReflectionProperty $property, bool $fromQuery): array
     {
         $result = [];
 
         $result[] = match ($property->getType()->getName()) {
             'string' => 'string',
             'int' => 'integer',
-            'bool', 'boolean' => 'boolean',
+            'bool' => $fromQuery ? 'in:0,1' : 'boolean',
             default => throw new \Exception($property->getType() . ' type is not support')
         };
 
