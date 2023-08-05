@@ -3,8 +3,10 @@
 namespace App;
 
 use App\Attributes\FromBody;
+use App\Attributes\FromHeader;
 use App\Attributes\FromQuery;
 use App\Factories\BodyDtoFactory;
+use App\Factories\HeaderDtoFactory;
 use App\Factories\QueryDtoFactory;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -19,6 +21,7 @@ class RouteControllerDispatcher extends ControllerDispatcher
         Container $container,
         private readonly QueryDtoFactory $queryDtoFactory,
         private readonly BodyDtoFactory $bodyDtoFactory,
+        private readonly HeaderDtoFactory $headerDtoFactory,
     ) {
         parent::__construct($container);
     }
@@ -40,6 +43,9 @@ class RouteControllerDispatcher extends ControllerDispatcher
         }
         if (!is_null($attribute = get_attribute($parameter, FromBody::class))) {
             return $this->bodyDtoFactory->createFromRequest($type, $attribute, $this->container->make(FormRequest::class));
+        }
+        if (!is_null($attribute = get_attribute($parameter, FromHeader::class))) {
+            return $this->headerDtoFactory->createFromRequest($type, $attribute, $this->container->make(FormRequest::class));
         }
         return parent::transformDependency($parameter, $parameters, $skippableValue);
     }

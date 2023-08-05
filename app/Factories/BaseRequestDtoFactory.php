@@ -61,14 +61,7 @@ abstract class BaseRequestDtoFactory
         }
     }
 
-    protected function getFieldName(ReflectionProperty $property): string
-    {
-        if (is_null($attribute = get_attribute($property, FromQuery::class))) {
-            return $property->getName();
-        }
-
-        return $attribute->field;
-    }
+    protected abstract function getFieldName(ReflectionProperty $property): string;
 //
 //    /**
 //     * @param Collection $data

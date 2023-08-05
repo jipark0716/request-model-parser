@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Attributes\FromBody;
+use App\Attributes\FromHeader;
 use App\Attributes\FromQuery;
 use App\Http\Dtos\User\IndexDto;
 use App\Http\Requests\Request;
@@ -13,9 +14,9 @@ class UserController extends Controller
      * @param IndexDto $request
      * @return void
      */
-    public function index(#[FromQuery] IndexDto $request): void
+    public function index(#[FromQuery] IndexDto $request, #[FromHeader('accept')] string $contentType): void
     {
-        dd($request);
+        dd($contentType, $request);
     }
 
     /**
