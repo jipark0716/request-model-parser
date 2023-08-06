@@ -5,7 +5,6 @@ namespace App\Factories;
 use App\Attributes\Collect;
 use App\Attributes\HasFieldAttribute;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Collection;
 use ReflectionParameter;
 use ReflectionException;
 use ReflectionClass;
@@ -20,7 +19,7 @@ abstract class BaseRequestDtoFactory
      * @return mixed
      * @throws ReflectionException
      */
-    public function createFromRequest(ReflectionParameter $parameter, HasFieldAttribute $attribute, FormRequest $request): mixed
+    public function createFromRequest(ReflectionParameter|ReflectionProperty $parameter, HasFieldAttribute $attribute, FormRequest $request): mixed
     {
         $data = $this->getData($request);
         if (!is_null($attribute->field)) {
@@ -46,27 +45,20 @@ abstract class BaseRequestDtoFactory
             case 'bool':
                 return $data;
             case 'array':
-                if (is_null($property) || is_null($collect = get_attribute($property, Collect::Class))) {
-                    return $data ?? [];
-                }
-                /**
-                 * @var Collection $data
-                 */
-                return collect($data ?? [])->map(fn ($row) => $this->create($collect->collect, $row))->toArray();
+                return is_null($property) || is_null($collect = get_attribute($property, Collect::Class)) ?
+                    $data ?? []:
+                    collect($data ?? [])->map(fn ($row) => $this->create($collect->collect, $row))->toArray();
             default:
                 $typeClass = new ReflectionClass($typeName);
                 $result = $typeClass->newInstanceWithoutConstructor();
-                foreach ($typeClass->getProperties() as $property) {
-                    $fieldName = $this->getFieldName($property);
+                collect($typeClass->getProperties())->each(fn (ReflectionProperty $property) =>
                     $property->setValue(
                         $result,
                         $this->create(
                             $property->getType()->getName(),
-                            $data[$fieldName] ?? null,
+                            $data[$this->getFieldName($property)] ?? null,
                             $property,
-                        )
-                    );
-                }
+                        )));
                 return $result;
         }
     }

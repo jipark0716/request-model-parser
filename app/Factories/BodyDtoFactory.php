@@ -10,7 +10,7 @@ class BodyDtoFactory extends BaseRequestDtoFactory
 {
     protected function getData(FormRequest $request): array
     {
-        return $request->json();
+        return $request->json()->all();
     }
 
     protected function getFieldName(ReflectionProperty $property): string

@@ -5,9 +5,11 @@ namespace App;
 use App\Attributes\FromBody;
 use App\Attributes\FromHeader;
 use App\Attributes\FromQuery;
+use App\Attributes\FromRequest;
 use App\Factories\BodyDtoFactory;
 use App\Factories\HeaderDtoFactory;
 use App\Factories\QueryDtoFactory;
+use App\Factories\RequestDtoFactory;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,6 +24,7 @@ class RouteControllerDispatcher extends ControllerDispatcher
         private readonly QueryDtoFactory $queryDtoFactory,
         private readonly BodyDtoFactory $bodyDtoFactory,
         private readonly HeaderDtoFactory $headerDtoFactory,
+        private readonly RequestDtoFactory $requestDtoFactory,
     ) {
         parent::__construct($container);
     }
@@ -44,6 +47,9 @@ class RouteControllerDispatcher extends ControllerDispatcher
         }
         if (!is_null($attribute = get_attribute($parameter, FromHeader::class))) {
             return $this->headerDtoFactory->createFromRequest($parameter, $attribute, $this->container->make(FormRequest::class));
+        }
+        if (!is_null(get_attribute($parameter, FromRequest::class))) {
+            return $this->requestDtoFactory->createFromRequest($parameter, $this->container->make(FormRequest::class));
         }
         return parent::transformDependency($parameter, $parameters, $skippableValue);
     }
