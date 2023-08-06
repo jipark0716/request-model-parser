@@ -4,14 +4,13 @@ namespace App\Factories;
 
 use App\Attributes\FromBody;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Collection;
 use ReflectionProperty;
 
 class BodyDtoFactory extends BaseRequestDtoFactory
 {
-    protected function getData(FormRequest $request): Collection
+    protected function getData(FormRequest $request): array
     {
-        return collect($request->json());
+        return $request->json();
     }
 
     protected function getFieldName(ReflectionProperty $property): string

@@ -2,60 +2,70 @@
 
 namespace App\Factories;
 
-use App\Attributes\FromQuery;
+use App\Attributes\Collect;
 use App\Attributes\HasFieldAttribute;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
+use ReflectionParameter;
 use ReflectionException;
-use ReflectionNamedType;
 use ReflectionClass;
 use ReflectionProperty;
 
 abstract class BaseRequestDtoFactory
 {
     /**
-     * @param ReflectionNamedType $type
-     * @param FromQuery $attribute
+     * @param ReflectionParameter $parameter
+     * @param HasFieldAttribute $attribute
      * @param FormRequest $request
      * @return mixed
      * @throws ReflectionException
      */
-    public function createFromRequest(ReflectionNamedType $type, HasFieldAttribute $attribute, FormRequest $request): mixed
+    public function createFromRequest(ReflectionParameter $parameter, HasFieldAttribute $attribute, FormRequest $request): mixed
     {
         $data = $this->getData($request);
         if (!is_null($attribute->field)) {
-            $data = $data->get($attribute->field);
+            $data = $data[$attribute->field] ?? '';
         }
-        return $this->create($type, $data);
+        return $this->create($parameter->getType()->getName(), $data, $parameter);
     }
 
-    protected abstract function getData(FormRequest $request): Collection;
+    protected abstract function getData(FormRequest $request): array;
 
     /**
-     * @param ReflectionNamedType $type
-     * @param Collection $data
+     * @param string $typeName
+     * @param mixed $data
+     * @param ReflectionProperty|ReflectionParameter|null $property
      * @return mixed
      * @throws ReflectionException
      */
-    protected function create(ReflectionNamedType $type, mixed $data): mixed
+    protected function create(string $typeName, mixed $data, ReflectionProperty|ReflectionParameter|null $property = null): mixed
     {
-        switch ($name = $type->getName()) {
+        switch ($typeName) {
             case 'int':
             case 'string':
             case 'bool':
                 return $data;
-//            case 'array':
-//                return $data->map(fn ($row) => (
-//                    $this->create()
-//                ));
+            case 'array':
+                if (is_null($property) || is_null($collect = get_attribute($property, Collect::Class))) {
+                    return $data ?? [];
+                }
+                /**
+                 * @var Collection $data
+                 */
+                return collect($data ?? [])->map(fn ($row) => $this->create($collect->collect, $row))->toArray();
             default:
-                $typeClass = new ReflectionClass($name);
+                $typeClass = new ReflectionClass($typeName);
                 $result = $typeClass->newInstanceWithoutConstructor();
                 foreach ($typeClass->getProperties() as $property) {
                     $fieldName = $this->getFieldName($property);
-                    if ($data->has($fieldName)) {
-                        $property->setValue($result, $this->create($property->getType(), $data->get($fieldName)));
-                    }
+                    $property->setValue(
+                        $result,
+                        $this->create(
+                            $property->getType()->getName(),
+                            $data[$fieldName] ?? null,
+                            $property,
+                        )
+                    );
                 }
                 return $result;
         }

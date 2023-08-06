@@ -16,6 +16,7 @@ class UserController extends Controller
      */
     public function index(#[FromQuery] IndexDto $request, #[FromHeader('accept')] string $contentType): void
     {
+//        dd($contentType, $request);
         dd($contentType, $request);
     }
 

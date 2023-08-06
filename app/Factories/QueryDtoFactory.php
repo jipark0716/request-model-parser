@@ -4,14 +4,13 @@ namespace App\Factories;
 
 use App\Attributes\FromQuery;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Collection;
 use ReflectionProperty;
 
 class QueryDtoFactory extends BaseRequestDtoFactory
 {
-    protected function getData(FormRequest $request): Collection
+    protected function getData(FormRequest $request): array
     {
-        return collect($request->query);
+        return $request->query->all();
     }
 
     protected function getFieldName(ReflectionProperty $property): string

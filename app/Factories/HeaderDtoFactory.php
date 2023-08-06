@@ -9,9 +9,9 @@ use Illuminate\Support\Collection;
 
 class HeaderDtoFactory extends BaseRequestDtoFactory
 {
-    protected function getData(FormRequest $request): Collection
+    protected function getData(FormRequest $request): array
     {
-        return collect($request->headers)->map(fn(array $row): string => $row[0]);
+        return collect($request->headers)->map(fn(array $row): string => $row[0])->toArray();
     }
 
     protected function getFieldName(ReflectionProperty $property): string
