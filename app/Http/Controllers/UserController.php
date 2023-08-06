@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Attributes\FromBody;
 use App\Attributes\FromQuery;
 use App\Http\Dtos\User\IndexDto;
 use App\Http\Requests\Request;
@@ -20,9 +21,9 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(#[FromBody] IndexDto $request)
     {
-        //
+        dd($request);
     }
 
     /**

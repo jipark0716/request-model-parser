@@ -3,21 +3,24 @@
 namespace App\Factories;
 
 use App\Attributes\FromQuery;
+use App\Attributes\HasFieldAttribute;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
+use ReflectionException;
 use ReflectionNamedType;
 use ReflectionClass;
 use ReflectionProperty;
 
-class RequestDtoFactory
+abstract class BaseRequestDtoFactory
 {
     /**
      * @param ReflectionNamedType $type
      * @param FromQuery $attribute
      * @param FormRequest $request
      * @return mixed
+     * @throws ReflectionException
      */
-    public function createFromRequest(ReflectionNamedType $type, FromQuery $attribute, FormRequest $request): mixed
+    public function createFromRequest(ReflectionNamedType $type, HasFieldAttribute $attribute, FormRequest $request): mixed
     {
         $data = $this->getData($request);
         if (!is_null($attribute->field)) {
@@ -26,16 +29,13 @@ class RequestDtoFactory
         return $this->create($type, $data);
     }
 
-    protected function getData(FormRequest $request): Collection
-    {
-        return collect($request->query);
-    }
+    protected abstract function getData(FormRequest $request): Collection;
 
     /**
      * @param ReflectionNamedType $type
      * @param Collection $data
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function create(ReflectionNamedType $type, mixed $data): mixed
     {
