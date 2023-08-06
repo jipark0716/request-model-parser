@@ -3,22 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Attributes\FromBody;
-use App\Attributes\FromHeader;
 use App\Attributes\FromRequest;
 use App\Http\Dtos\User\IndexDto;
 use App\Http\Dtos\User\Request;
+use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
-    /**
-     * @param Request $request
-     * @param string $contentType
-     * @return void
-     */
-    public function index(#[FromRequest] Request $request, #[FromHeader('accept')] string $contentType): void
+    #[OA\Get(
+        path: "/api/v1/admin/user-listing",
+        summary: "List all non-admin users",
+        security: [
+            [
+                'bearerAuth' => []
+            ]
+        ],
+        tags: ["Admin"],
+        responses: [
+            new OA\Response(response: 200, description: "users retrieved success"),
+        ]
+    )]
+    public function index(#[FromRequest] Request $request): Request
     {
-//        dd($contentType, $request);
-        dd($contentType, $request);
+        return $request;
     }
 
     /**

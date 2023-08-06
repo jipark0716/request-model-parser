@@ -1,0 +1,28 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/admin/user-listing": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "List all non-admin users",
+                "operationId": "da370d3eb4e15ef1a772616485596989",
+                "responses": {
+                    "200": {
+                        "description": "users retrieved success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    }
+}

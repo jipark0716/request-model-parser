@@ -13,7 +13,7 @@ use ReflectionProperty;
 abstract class BaseRequestDtoFactory
 {
     /**
-     * @param ReflectionParameter $parameter
+     * @param ReflectionParameter|ReflectionProperty $parameter
      * @param HasFieldAttribute $attribute
      * @param FormRequest $request
      * @return mixed

@@ -3,7 +3,12 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use OpenApi\Attributes as OA;
 
+#[OA\Info(
+    version: '1.0.0',
+    title: 'My API'
+)]
 class Kernel extends HttpKernel
 {
     /**
