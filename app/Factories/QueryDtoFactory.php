@@ -4,7 +4,6 @@ namespace App\Factories;
 
 use App\Attributes\FromQuery;
 use Illuminate\Foundation\Http\FormRequest;
-use ReflectionProperty;
 
 class QueryDtoFactory extends BaseRequestDtoFactory
 {
@@ -13,8 +12,8 @@ class QueryDtoFactory extends BaseRequestDtoFactory
         return $request->query->all();
     }
 
-    protected function getFieldName(ReflectionProperty $property): string
+    protected function getFromAttribute(): string
     {
-        return get_attribute($property, FromQuery::class)?->field ?? $property->getName();
+        return FromQuery::class;
     }
 }

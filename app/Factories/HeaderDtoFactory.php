@@ -3,9 +3,7 @@
 namespace App\Factories;
 
 use App\Attributes\FromHeader;
-use ReflectionProperty;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Collection;
 
 class HeaderDtoFactory extends BaseRequestDtoFactory
 {
@@ -14,8 +12,8 @@ class HeaderDtoFactory extends BaseRequestDtoFactory
         return collect($request->headers)->map(fn(array $row): string => $row[0])->toArray();
     }
 
-    protected function getFieldName(ReflectionProperty $property): string
+    protected function getFromAttribute(): string
     {
-        return get_attribute($property, FromHeader::class)?->field ?? $property->getName();
+        return FromHeader::class;
     }
 }
