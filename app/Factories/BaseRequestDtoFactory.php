@@ -5,6 +5,7 @@ namespace App\Factories;
 use App\Attributes\Collect;
 use App\Attributes\FromHeader;
 use App\Attributes\HasFieldAttribute;
+use App\Attributes\Validate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -92,9 +93,17 @@ abstract class BaseRequestDtoFactory
         }
         $result = [];
         $field = join('.', $prefix);
-        if (!is_null($property) && !$property->hasDefaultValue() && !$property->getType()->allowsNull()) {
-            $result[$field] = ['required'];
+
+        if (!is_null($property)) {
+            if (!$property->hasDefaultValue() && !$property->getType()->allowsNull()) {
+                $result[$field] = ['required'];
+            }
+
+            $result[$field] = collect(get_attributes($property, Validate::class))
+                ->map(fn(Validate $validate) => $validate->rule)
+                ->merge($result[$field]);
         }
+
         switch ($typeName) {
             case 'int':
             case 'string':
@@ -117,58 +126,4 @@ abstract class BaseRequestDtoFactory
         }
         return $result;
     }
-//
-//    /**
-//     * @param Collection $data
-//     * @param ReflectionClass $reflectClass
-//     * @return void
-//     * @throws ValidationException
-//     */
-//    protected function validate(Collection $data, ReflectionClass $reflectClass)
-//    {
-//        Facades\Validator::make(
-//            $data->toArray(),
-//            $this->rules($data, $reflectClass),
-//        )->validate();
-//    }
-//
-//    protected function rules(Collection $data, ReflectionClass $reflectClass): array
-//    {
-//        return collect($reflectClass->getProperties())
-//            ->mapWithKeys(fn(ReflectionProperty $property): array => [
-//                $property->getName() => $this->rulesByAttribute($property, true)
-//            ])
-//            ->toArray();
-//    }
-//
-//    /**
-//     * @param ReflectionProperty $property
-//     * @return array
-//     * @throws \Exception
-//     */
-//    protected function rulesByAttribute(ReflectionProperty $property): array
-//    {
-//        $result = [$this->getTypeRule($property)];
-//
-//        if (!$property->getType()->allowsNull() && !$property->hasDefaultValue()) {
-//            $result[] = 'required';
-//        }
-//
-//        return $result;
-//    }
-//
-//    /**
-//     * @param ReflectionProperty $property
-//     * @return string
-//     * @throws \Exception
-//     */
-//    protected function getTypeRule(ReflectionProperty $property)
-//    {
-//        return match ($property->getType()->getName()) {
-//            'string' => 'string',
-//            'int' => 'integer',
-//            'bool' => 'boolean',
-//            default => throw new \Exception($property->getType() . ' type is not support')
-//        };
-//    }
 }

@@ -25,7 +25,7 @@ class UserController extends Controller
     )]
     public function index(#[FromRequest] Request $request): Request
     {
-        return $request;
+        dd($request);
     }
 
     /**
