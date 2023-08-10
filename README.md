@@ -1,12 +1,12 @@
 # Request Model Parser
-php느 타입에 대한 자유도가 높다.   
+php 는 타입에 대한 자유도가 높다.   
 이는 장점이 될 수 있지만 IDE 자동완성, 개발자의 실수 가능성 등의 측면에서 단점이 될 수 있다.   
-이 단점이 Request에서 가장 크게 작용 한다고 생각한다.   
-개박자가 입력하지 않는 Argument을 활용해야 한다.
+이 단점이 request parameter 에서 가장 크게 작용 한다고 생각한다.   
+개박자가 입력하지 않는 Argument 을 활용해야 한다.
 
-이를 개선하기 위해 PHP 8.0부터 지원하는 Attribute를 이용하여   
-.NET, Spring Boot 등에서 지원하는 Controller method 에 argument parser와 비슷하게 사용 할 수 있는   
-Laravel용 패키지이다. (추후에 패키지로 작성 예정)
+이를 개선하기 위해 PHP 8.0부터 지원하는 Attribute 를 이용하여   
+.NET, Spring Boot 등에서 지원하는 Controller method 에 argument parser 와 비슷하게 사용 할 수 있는   
+Laravel 용 패키지이다. (추후에 패키지로 작성 예정)
 
 ## Usage
 ```PHP
@@ -87,9 +87,9 @@ class BodyDto
 ```
 
 ## object collect parse
-php는 array 요소의 타입을 강제할 수 없다.   
-때문에 builtin이 아닌 타입읠 배열 구조의 요청을 처리하는경우   
-Attribute로 배열 요소의 타입을 입력시 해당 타입으로 파싱된다.
+php 는 array 요소의 타입을 강제할 수 없다.   
+때문에 builtin 이 아닌 타입읠 배열 구조의 요청을 처리하는경우   
+Attribute 로 배열 요소의 타입을 입력시 해당 타입으로 파싱된다.
 ```PHP
 <?php
 ...
@@ -120,8 +120,8 @@ class UserDto
 ```
 
 ### validation
-기본 파라미터는 누락시 Laravel Validtor를 활용하여 required 유효성 검사에서 필터링됩니다.   
-required필터링을 원하지 않으면 null을 허용하거나 default value를 추가하면 됩니다.
+기본 파라미터는 누락시 Laravel validator 를 활용하여 required 유효성 검사에서 필터링됩니다.   
+required 필터링을 원하지 않으면 null 을 허용하거나 default value 를 추가하면 됩니다.
 ```php
 class QueryDto
 {
