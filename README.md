@@ -125,6 +125,13 @@ required필터링을 원하지 않으면 null을 허용하거나 default value�
 ```php
 class QueryDto
 {
-    public readonly int $page = 1;
-    public readonly ?string $name;
+    #[Validate('min:1')]
+    public readonly int $page;
+    
+    #[Validate(new CustomRule())]
+    public readonly string $name;
+    
+    public readonly ?string $group; // without required
+    public readonly int $perPage = 1; // without required
 }
+```
