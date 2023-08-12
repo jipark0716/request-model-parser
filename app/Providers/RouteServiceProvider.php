@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Factories\DtoSwaggerFactory;
+use App\Factories\SwaggerGeneratorFactory;
 use App\RouteControllerDispatcher;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -9,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Contracts\ControllerDispatcher as ControllerDispatcherContract;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use L5Swagger\GeneratorFactory;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -31,6 +34,10 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(ControllerDispatcherContract::class, RouteControllerDispatcher::class);
+        $this->app->bind(GeneratorFactory::class, SwaggerGeneratorFactory::class);
+        $configPath = __DIR__.'/../../config/jipark-swagger.php';
+        $this->mergeConfigFrom($configPath, 'l5-swagger');
+        $this->mergeConfigFrom($configPath, 'jipark-swagger');
 
         $this->routes(function () {
             Route::middleware('api')
