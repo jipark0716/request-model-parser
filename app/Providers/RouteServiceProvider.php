@@ -35,9 +35,6 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->app->bind(ControllerDispatcherContract::class, RouteControllerDispatcher::class);
         $this->app->bind(GeneratorFactory::class, SwaggerGeneratorFactory::class);
-        $configPath = __DIR__.'/../../config/jipark-swagger.php';
-        $this->mergeConfigFrom($configPath, 'l5-swagger');
-        $this->mergeConfigFrom($configPath, 'jipark-swagger');
 
         $this->routes(function () {
             Route::middleware('api')

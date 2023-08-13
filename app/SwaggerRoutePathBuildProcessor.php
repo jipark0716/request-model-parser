@@ -19,8 +19,6 @@ class SwaggerRoutePathBuildProcessor implements ProcessorInterface
 
     public function __invoke(Analysis $analysis): void
     {
-        $operation = $analysis->unmerged()->getAnnotationsOfType(Operation::class);
-
         $routes = collect(Facades\Route::getRoutes());
         if (!is_null($this->namespaces)) {
             $routes = $routes->filter(
@@ -31,17 +29,37 @@ class SwaggerRoutePathBuildProcessor implements ProcessorInterface
                     )
             );
         }
-        dd($routes->map(fn (Route $route) => $route->uri())->join("\n"));
-
-        $analysis->openapi->paths[] = $this->createExample($operation);
+        $analysis->openapi->paths = array_merge(
+            $analysis->openapi->paths,
+            $routes->groupBy('uri')
+                ->map(fn (Collection $routes) => $this->createPath($routes))
+                ->toArray()
+        );
     }
 
-    private function createExample($operation): PathItem
+    /**
+     * @param Collection<Route> $routes
+     * @return PathItem
+     */
+    private function createPath(Collection $routes): PathItem
     {
-        return new PathItem(
-            [
-                'path' => 'asdf',
-            ]
-        );
+        $arguments = [
+            'path' => $routes->first()->uri,
+        ];
+
+        foreach (['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'] as $method) {
+            if ($route = $routes->firstWhere(fn (Route $route): bool => in_array('get', $route->methods))) {
+                $arguments[$method] = $this->parseAction($route);
+            }
+        }
+
+        return new PathItem($arguments);
+    }
+
+    private function parseAction(Route $route): array
+    {
+        return [
+
+        ];
     }
 }

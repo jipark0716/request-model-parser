@@ -24,6 +24,16 @@
                 ]
             }
         },
-        "asdf": {}
+        "api/documentation": {},
+        "docs/{jsonFile?}": {},
+        "docs/asset/{asset}": {},
+        "api/oauth2-callback": {},
+        "sanctum/csrf-cookie": {},
+        "_ignition/health-check": {},
+        "_ignition/execute-solution": {},
+        "_ignition/update-config": {},
+        "api/users": {},
+        "api/users/{user}": {},
+        "/": {}
     }
 }

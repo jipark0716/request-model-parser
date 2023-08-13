@@ -11,7 +11,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $configPath = __DIR__.'/../../config/jipark-swagger.php';
+        $this->mergeConfigFrom($configPath, 'jipark-swagger');
+        $this->app['config']->set('l5-swagger', config('jipark-swagger'));
     }
 
     /**
