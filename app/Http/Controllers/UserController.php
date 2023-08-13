@@ -39,10 +39,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(#[FromRequest] Request $request, string $id)
     {
-        dd(request());
-//        dd($id);
+        dd($request, $id);
     }
 
     /**

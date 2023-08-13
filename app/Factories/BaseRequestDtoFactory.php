@@ -59,14 +59,17 @@ abstract class BaseRequestDtoFactory
             default:
                 $typeClass = new ReflectionClass($typeName);
                 $result = $typeClass->newInstanceWithoutConstructor();
-                collect($typeClass->getProperties())->each(fn (ReflectionProperty $property) =>
-                $property->setValue(
-                    $result,
-                    $this->create(
-                        $property->getType()->getName(),
-                        $data[$this->getFieldName($property)] ?? null,
-                        $property,
-                    )));
+                collect($typeClass->getProperties())
+                    ->filter(fn (ReflectionProperty $property) => array_key_exists($this->getFieldName($property), $data))
+                    ->each(fn (ReflectionProperty $property) =>
+                         $property->setValue(
+                            $result,
+                            $this->create(
+                                $property->getType()->getName(),
+                                $data[$this->getFieldName($property)] ?? null,
+                                $property,
+                            ))
+                    );
                 return $result;
         }
     }
@@ -91,11 +94,11 @@ abstract class BaseRequestDtoFactory
                 !is_null($attribute->field))) {
             $prefix[] = $this->getFieldName($property);
         }
-        $result = [];
         $field = join('.', $prefix);
+        $result = [$field => []];
 
         if (!is_null($property)) {
-            if (!$property->hasDefaultValue() && !$property->getType()->allowsNull()) {
+            if ($property->getType() != 'array' && !$property->hasDefaultValue() && !$property->getType()->allowsNull()) {
                 $result[$field] = ['required'];
             }
 

@@ -8,9 +8,9 @@ use App\Rules\StartWith;
 
 class IndexDto
 {
-    public readonly string $name;
+    public readonly ?string $name;
     public readonly int $id;
-    public readonly bool $hide;
+    public bool $hide = false;
 
     /**
      * @var Tag[] $tags
