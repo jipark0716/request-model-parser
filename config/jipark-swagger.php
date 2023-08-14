@@ -42,7 +42,7 @@ return [
                     base_path('app'),
                 ],
                 'namespace' => [
-                    'App\Http\Controllers\\',
+                    'App\\Http\\Controllers\\',
                 ]
             ],
         ],

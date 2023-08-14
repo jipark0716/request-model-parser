@@ -13,11 +13,6 @@ class UserController extends Controller
     #[OA\Get(
         path: "/api/v1/admin/user-listing",
         summary: "List all non-admin users",
-        security: [
-            [
-                'bearerAuth' => []
-            ]
-        ],
         tags: ["Admin"],
         responses: [
             new OA\Response(response: 200, description: "users retrieved success"),

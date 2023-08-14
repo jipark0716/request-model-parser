@@ -23,9 +23,9 @@ class SwaggerRoutePathBuildProcessor implements ProcessorInterface
         if (!is_null($this->namespaces)) {
             $routes = $routes->filter(
                 fn (Route $route) =>
-                    $this->namespaces->countBy(
+                    ($controller = $route->getControllerClass()) && $this->namespaces->first(
                         fn (string $namespace) =>
-                            str_starts_with($route->getControllerClass(), $namespace)
+                        str_starts_with($controller, $namespace)
                     )
             );
         }
@@ -47,19 +47,26 @@ class SwaggerRoutePathBuildProcessor implements ProcessorInterface
             'path' => $routes->first()->uri,
         ];
 
-        foreach (['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'] as $method) {
-            if ($route = $routes->firstWhere(fn (Route $route): bool => in_array('get', $route->methods))) {
-                $arguments[$method] = $this->parseAction($route);
+        foreach (['get', 'put', 'post', 'delete', 'options', 'patch', 'trace'] as $method) {
+            if ($route = $routes->firstWhere(fn (Route $route): bool => in_array(strtoupper($method), $route->methods))) {
+                $arguments[$method] = $this->parseAction($route, $method);
             }
         }
 
         return new PathItem($arguments);
     }
 
-    private function parseAction(Route $route): array
+    private function parseAction(Route $route, string $method): array
     {
         return [
-
+            'tags' => [],
+            'summary' => '',
+            'operationId' => "[$method]/{$route->uri()}",
+            'response' => [
+                '200' => [
+                    'description' => 'asdf',
+                ]
+            ]
         ];
     }
 }
